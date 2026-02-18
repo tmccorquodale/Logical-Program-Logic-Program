@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 
 interface GoalStepProps {
@@ -22,7 +21,7 @@ export const GoalStep: React.FC<GoalStepProps> = ({ goal, setGoal }) => {
         <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600" />
         <h2 className="text-3xl font-black text-gray-800 mb-6 flex items-center gap-4">
           <span className="bg-indigo-100 text-indigo-600 w-10 h-10 rounded-full flex items-center justify-center text-xl">1</span>
-          Define the Overarching Goal
+          Define the Overarching Goal/Vision
         </h2>
         <p className="text-gray-500 mb-8 text-lg leading-relaxed">
           Start by defining the ultimate "North Star" for your program. What is the highest level of change you want to see in the world as a result of your work?
