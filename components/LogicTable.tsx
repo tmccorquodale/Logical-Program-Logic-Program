@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ProgramLogic } from '../types';
 
@@ -21,8 +20,8 @@ export const LogicTable: React.FC<LogicTableProps> = ({ data, onJumpTo }) => {
             </th>
           </tr>
           <tr className="bg-gray-100 text-gray-500 font-black uppercase tracking-tighter border-b">
-            <th className="p-3 border-r text-left w-[15%]">Need</th>
-            <th className="p-3 border-r text-left w-[15%]">Aim</th>
+            <th className="p-3 border-r text-left w-[15%]">Needs</th>
+            <th className="p-3 border-r text-left w-[15%]">Aims</th>
             <th className="p-3 border-r text-left w-[17%]">Activities</th>
             <th className="p-3 border-r text-left w-[17%]">Outputs</th>
             <th className="p-3 border-r text-left w-[18%]">Short Term Impacts</th>
