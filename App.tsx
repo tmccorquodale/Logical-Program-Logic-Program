@@ -160,7 +160,7 @@ const App: React.FC = () => {
         <div className="container mx-auto px-4 max-w-6xl flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="text-3xl">📊</span>
-            <h1 className="text-2xl font-black tracking-tighter uppercase">Logical Program Logic Program</h1>
+            <h1 className="text-2xl font-black tracking-tighter uppercase">Program Logic Builder</h1>
           </div>
           <div className="flex items-center gap-3">
             <label className="cursor-pointer bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg border border-white/30 text-[10px] font-bold uppercase transition-all flex items-center gap-2">
@@ -251,71 +251,79 @@ const App: React.FC = () => {
           )}
 
           {currentStep === 'DETAILS' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200">
-                <div className="flex flex-wrap gap-2 overflow-x-auto">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="w-full md:w-1/4 space-y-2">
+                <h3 className="font-bold text-gray-400 text-[10px] uppercase px-2 mb-2">Select Aim</h3>
+                <div className="max-h-[600px] overflow-y-auto space-y-2 pr-2">
                   {logic.needs.flatMap(n => n.aims.map(a => ({ needId: n.id, aim: a })))
                     .map(({ needId, aim }) => (
                     <button
                       key={aim.id}
                       onClick={() => { setSelectedNeedId(needId); setSelectedAimId(aim.id); }}
-                      className={`px-3 py-1.5 rounded-md text-[10px] font-bold border-2 transition-all whitespace-nowrap ${
-                        selectedAimId === aim.id ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-400'
+                      className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold border-2 transition-all leading-relaxed ${
+                        selectedAimId === aim.id ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-[1.02]' : 'bg-white text-gray-500 border-gray-100 hover:border-emerald-100'
                       }`}
                     >
-                      {aim.description.substring(0, 30)}...
+                      {aim.description}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {currentAim ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-                  <ListEditor
-                    title="Activities"
-                    description="Steps taken"
-                    items={currentAim.activities.map((t, i) => ({ id: i.toString(), text: t }))}
-                    typeLabel="Activity"
-                    onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', [...currentAim.activities, t])}
-                    onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', currentAim.activities.filter((_, idx) => idx !== parseInt(i)))}
-                    onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', currentAim.activities.map((old, idx) => idx === parseInt(i) ? t : old))}
-                  />
-                  <ListEditor
-                    title="Outputs"
-                    description="Tangible results"
-                    items={currentAim.outputs.map((t, i) => ({ id: i.toString(), text: t }))}
-                    typeLabel="Output"
-                    onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'outputs', [...currentAim.outputs, t])}
-                    onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'outputs', currentAim.outputs.filter((_, idx) => idx !== parseInt(i)))}
-                    onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'outputs', currentAim.outputs.map((old, idx) => idx === parseInt(i) ? t : old))}
-                  />
-                  <ListEditor
-                    title="Short Term Impacts"
-                    description="Immediate changes"
-                    items={currentAim.shortTermImpacts.map((t, i) => ({ id: i.toString(), text: t }))}
-                    typeLabel="Impact"
-                    onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'shortTermImpacts', [...currentAim.shortTermImpacts, t])}
-                    onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'shortTermImpacts', currentAim.shortTermImpacts.filter((_, idx) => idx !== parseInt(i)))}
-                    onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'shortTermImpacts', currentAim.shortTermImpacts.map((old, idx) => idx === parseInt(i) ? t : old))}
-                  />
-                  <ListEditor
-                    title="Long Term Impacts"
-                    description="Sustainable goals"
-                    items={currentAim.longTermImpacts.map((t, i) => ({ id: i.toString(), text: t }))}
-                    typeLabel="Impact"
-                    onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'longTermImpacts', [...currentAim.longTermImpacts, t])}
-                    onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'longTermImpacts', currentAim.longTermImpacts.filter((_, idx) => idx !== parseInt(i)))}
-                    onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'longTermImpacts', currentAim.longTermImpacts.map((old, idx) => idx === parseInt(i) ? t : old))}
-                  />
-                </div>
-              ) : <div className="p-12 text-center text-gray-400 bg-white rounded-xl border-2 border-dashed">Select an Aim above.</div>}
+              <div className="flex-1 space-y-6">
+                {currentAim ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                    <ListEditor
+                      title="Activities"
+                      description="Steps taken"
+                      items={currentAim.activities.map((t, i) => ({ id: i.toString(), text: t }))}
+                      typeLabel="Activity"
+                      onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', [...currentAim.activities, t])}
+                      onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', currentAim.activities.filter((_, idx) => idx !== parseInt(i)))}
+                      onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', currentAim.activities.map((old, idx) => idx === parseInt(i) ? t : old))}
+                    />
+                    <ListEditor
+                      title="Outputs"
+                      description="Tangible results"
+                      items={currentAim.outputs.map((t, i) => ({ id: i.toString(), text: t }))}
+                      typeLabel="Output"
+                      onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'outputs', [...currentAim.outputs, t])}
+                      onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'outputs', currentAim.outputs.filter((_, idx) => idx !== parseInt(i)))}
+                      onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'outputs', currentAim.outputs.map((old, idx) => idx === parseInt(i) ? t : old))}
+                    />
+                    <ListEditor
+                      title="Short Term Impacts"
+                      description="Immediate changes"
+                      items={currentAim.shortTermImpacts.map((t, i) => ({ id: i.toString(), text: t }))}
+                      typeLabel="Impact"
+                      onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'shortTermImpacts', [...currentAim.shortTermImpacts, t])}
+                      onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'shortTermImpacts', currentAim.shortTermImpacts.filter((_, idx) => idx !== parseInt(i)))}
+                      onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'shortTermImpacts', currentAim.shortTermImpacts.map((old, idx) => idx === parseInt(i) ? t : old))}
+                    />
+                    <ListEditor
+                      title="Long Term Impacts"
+                      description="Sustainable goals"
+                      items={currentAim.longTermImpacts.map((t, i) => ({ id: i.toString(), text: t }))}
+                      typeLabel="Impact"
+                      onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'longTermImpacts', [...currentAim.longTermImpacts, t])}
+                      onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'longTermImpacts', currentAim.longTermImpacts.filter((_, idx) => idx !== parseInt(i)))}
+                      onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'longTermImpacts', currentAim.longTermImpacts.map((old, idx) => idx === parseInt(i) ? t : old))}
+                    />
+                  </div>
+                ) : (
+                  <div className="p-12 text-center text-gray-400 bg-white rounded-xl border-2 border-dashed h-full flex flex-col items-center justify-center">
+                    <span className="text-4xl mb-4">🎯</span>
+                    Select an Aim from the left to define its activities and impacts.
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
           {currentStep === 'REVIEW' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between bg-white p-6 rounded-xl border border-gray-100 shadow-lg">
-                <h2 className="text-xl font-bold">Strategy Overview</h2>
+                <h2 className="text-xl font-bold">Program Logic Review and Export</h2>
                 <button onClick={exportToExcel} className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700 transition-all text-sm">Download Excel</button>
               </div>
               <LogicTable data={logic} onJumpTo={jumpTo} />
