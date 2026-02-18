@@ -178,7 +178,7 @@ const App: React.FC = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-6xl flex-grow">
-        <StepIndicator currentStep={currentStep} />
+        <StepIndicator currentStep={currentStep} onStepClick={(step) => jumpTo(step)} />
 
         <div className="min-h-[500px]">
           {currentStep === 'GOAL' && (
