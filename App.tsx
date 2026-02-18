@@ -118,7 +118,7 @@ const App: React.FC = () => {
     const data: any[] = [];
     data.push(['PROJECT GOAL:', logic.goal]);
     data.push([]);
-    data.push(['Need', 'Aim', 'Activities', 'Outputs', 'Short/Medium Term Impacts', 'Long Term Impacts']);
+    data.push(['Needs', 'Aims', 'Activities', 'Outputs', 'Short/Medium Term Impacts', 'Long Term Impacts']);
 
     logic.needs.forEach((need, nIdx) => {
       need.aims.forEach((aim, aIdx) => {
@@ -180,7 +180,7 @@ const App: React.FC = () => {
       <main className="container mx-auto px-4 py-8 max-w-6xl flex-grow">
         <StepIndicator currentStep={currentStep} onStepClick={(step) => jumpTo(step)} />
 
-        <div className="min-h-[500px]">
+        <div className="min-h-[500px] mt-4">
           {currentStep === 'GOAL' && (
             <GoalStep goal={logic.goal} setGoal={(g) => updateLogic(l => ({ ...l, goal: g }))} />
           )}
@@ -331,7 +331,7 @@ const App: React.FC = () => {
           )}
         </div>
 
-        <footer className="mt-12 flex items-center justify-between border-t border-gray-200 pt-8">
+        <footer className="mt-12 flex items-center justify-between border-t border-gray-200 pt-8 pb-4">
           <button
             onClick={prevStep}
             disabled={currentStep === 'GOAL'}
@@ -346,6 +346,13 @@ const App: React.FC = () => {
             {currentStep === 'REVIEW' ? 'Download Result' : 'Continue →'}
           </button>
         </footer>
+
+        <div className="mt-8 py-6 border-t border-gray-100 text-center">
+          <p className="text-[10px] text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            This Program Logic Builder was developed by Thomas McCorquodale for use with The Office for Health and Medical Research's program management. 
+            If you have any questions or issues with the program please contact him at <a href="mailto:thomas.mccorquodale@health.nsw.gov.au" className="text-emerald-600 hover:underline font-medium">thomas.mccorquodale@health.nsw.gov.au</a>
+          </p>
+        </div>
       </main>
     </div>
   );
