@@ -11,12 +11,12 @@ export interface Aim {
 export interface Need {
   id: string;
   description: string;
-  aims: Aim[];
+  aims: Aims[];
 }
 
 export interface ProgramLogic {
   goal: string;
-  needs: Need[];
+  needs: Needs[];
 }
 
 export type StepType = 'GOAL' | 'NEEDS' | 'AIMS' | 'DETAILS' | 'REVIEW';
