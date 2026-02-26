@@ -18,9 +18,9 @@ export const GoalStep: React.FC<GoalStepProps> = ({ goal, setGoal }) => {
   return (
     <div className="max-w-4xl mx-auto py-10 animate-in fade-in zoom-in duration-500">
       <div className="bg-white p-10 rounded-3xl border border-gray-100 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600" />
+        <div className="absolute top-0 left-0 w-full h-2 bg-nsw-blue" />
         <h2 className="text-3xl font-black text-gray-800 mb-6 flex items-center gap-4">
-          <span className="bg-indigo-100 text-indigo-600 w-10 h-10 rounded-full flex items-center justify-center text-xl">1</span>
+          <span className="bg-nsw-light-blue/10 text-nsw-blue w-10 h-10 rounded-full flex items-center justify-center text-xl">1</span>
           Define the Overarching Goal/Vision
         </h2>
         <p className="text-gray-500 mb-8 text-lg leading-relaxed">
@@ -32,7 +32,7 @@ export const GoalStep: React.FC<GoalStepProps> = ({ goal, setGoal }) => {
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
             placeholder="e.g. To reduce healthcare inequality by providing affordable diagnostic tools to rural communities..."
-            className="w-full min-h-[200px] p-6 text-2xl font-medium border-2 border-gray-100 rounded-2xl focus:ring-8 focus:ring-indigo-50 focus:border-indigo-500 transition-all outline-none resize-none bg-gray-50/50 focus:bg-white placeholder:text-gray-300"
+            className="w-full min-h-[200px] p-6 text-2xl font-medium border-2 border-gray-100 rounded-2xl focus:ring-8 focus:ring-nsw-light-blue/10 focus:border-nsw-light-blue transition-all outline-none resize-none bg-gray-50/50 focus:bg-white placeholder:text-gray-300"
           />
           <div className="absolute bottom-4 right-4 text-[10px] font-bold text-gray-300 uppercase tracking-widest pointer-events-none">
             Click to edit your vision
