@@ -155,21 +155,22 @@ const App: React.FC = () => {
   const currentAim = currentNeed?.aims.find(a => a.id === selectedAimId);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="bg-emerald-700 text-white py-6 shadow-lg border-b-4 border-emerald-800">
+    <div className="min-h-screen bg-nsw-grey flex flex-col">
+      <header className="bg-nsw-blue text-white py-6 shadow-lg border-b-4 border-nsw-blue/30">
         <div className="container mx-auto px-4 max-w-6xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">📊</span>
-            <h1 className="text-2xl font-black tracking-tighter uppercase">Program Logic Builder</h1>
+          <div className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-3xl text-white inline-block -scale-x-100">square_foot</span>
+            <h1 className="text-3xl font-black tracking-tighter uppercase">Program Logic Builder</h1>
           </div>
           <div className="flex items-center gap-3">
             <label className="cursor-pointer bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg border border-white/30 text-[10px] font-bold uppercase transition-all flex items-center gap-2">
+              <span className="material-symbols-outlined text-sm">upload_file</span>
               Import Excel
               <input type="file" accept=".xlsx, .xls" className="hidden" onChange={handleImportExcel} />
             </label>
             <button 
               onClick={() => { if(confirm("Clear all current data?")) setLogic(initialLogic); }}
-              className="bg-rose-500/20 hover:bg-rose-500/40 px-3 py-1.5 rounded-lg border border-rose-400/30 text-[10px] font-bold uppercase transition-all"
+              className="bg-nsw-red/20 hover:bg-nsw-red/40 px-3 py-1.5 rounded-lg border border-nsw-red/30 text-[10px] font-bold uppercase transition-all"
             >
               Reset
             </button>
@@ -212,7 +213,7 @@ const App: React.FC = () => {
                     key={n.id}
                     onClick={() => setSelectedNeedId(n.id)}
                     className={`w-full text-left p-3 rounded-lg border-2 text-xs transition-all ${
-                      selectedNeedId === n.id ? 'bg-emerald-600 border-emerald-600 text-white shadow-md' : 'bg-white border-gray-100 text-gray-500'
+                      selectedNeedId === n.id ? 'bg-nsw-blue border-nsw-blue text-white shadow-md' : 'bg-white border-gray-100 text-gray-500'
                     }`}
                   >
                     {n.description.substring(0, 50)}...
@@ -261,7 +262,7 @@ const App: React.FC = () => {
                       key={aim.id}
                       onClick={() => { setSelectedNeedId(needId); setSelectedAimId(aim.id); }}
                       className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold border-2 transition-all leading-relaxed ${
-                        selectedAimId === aim.id ? 'bg-emerald-600 text-white border-emerald-600 shadow-md scale-[1.02]' : 'bg-white text-gray-500 border-gray-100 hover:border-emerald-100'
+                        selectedAimId === aim.id ? 'bg-nsw-blue text-white border-nsw-blue shadow-md scale-[1.02]' : 'bg-white text-gray-500 border-gray-100 hover:border-nsw-light-blue/30'
                       }`}
                     >
                       {aim.description}
@@ -324,7 +325,10 @@ const App: React.FC = () => {
             <div className="space-y-6">
               <div className="flex items-center justify-between bg-white p-6 rounded-xl border border-gray-100 shadow-lg">
                 <h2 className="text-xl font-bold">Program Logic Review and Export</h2>
-                <button onClick={exportToExcel} className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700 transition-all text-sm">Download Excel</button>
+                <button onClick={exportToExcel} className="bg-nsw-blue text-white px-6 py-2 rounded-lg font-bold hover:bg-nsw-blue/90 transition-all text-sm flex items-center gap-2">
+                  <span className="material-symbols-outlined text-lg">download</span>
+                  Download Excel
+                </button>
               </div>
               <LogicTable data={logic} onJumpTo={jumpTo} />
             </div>
@@ -335,22 +339,27 @@ const App: React.FC = () => {
           <button
             onClick={prevStep}
             disabled={currentStep === 'GOAL'}
-            className="px-6 py-2 border-2 border-gray-200 rounded-lg text-gray-500 font-bold hover:border-emerald-200 hover:text-emerald-600 disabled:opacity-30 transition-all text-sm"
+            className="px-6 py-2 border-2 border-gray-200 rounded-lg text-gray-500 font-bold hover:border-nsw-light-blue/30 hover:text-nsw-blue disabled:opacity-30 transition-all text-sm"
           >
             ← Previous
           </button>
           <button
             onClick={currentStep === 'REVIEW' ? exportToExcel : nextStep}
-            className="px-10 py-2 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition-all shadow-lg text-sm"
+            className="px-10 py-2 bg-nsw-blue text-white font-bold rounded-lg hover:bg-nsw-blue/90 transition-all shadow-lg text-sm flex items-center gap-2"
           >
-            {currentStep === 'REVIEW' ? 'Download Result' : 'Continue →'}
+            {currentStep === 'REVIEW' ? (
+              <>
+                <span className="material-symbols-outlined text-lg">download</span>
+                Download Result
+              </>
+            ) : 'Continue →'}
           </button>
         </footer>
 
         <div className="mt-8 py-6 border-t border-gray-100 text-center">
           <p className="text-[10px] text-gray-400 max-w-2xl mx-auto leading-relaxed">
             This Program Logic Builder was developed by Thomas McCorquodale for use with The Office for Health and Medical Research's program management. 
-            If you have any questions or issues with the program please contact him at <a href="mailto:thomas.mccorquodale@health.nsw.gov.au" className="text-emerald-600 hover:underline font-medium">thomas.mccorquodale@health.nsw.gov.au</a>
+            If you have any questions or issues with the program please contact him at <a href="mailto:thomas.mccorquodale@health.nsw.gov.au" className="text-nsw-blue hover:underline font-medium">thomas.mccorquodale@health.nsw.gov.au</a>
           </p>
         </div>
       </main>
