@@ -16,7 +16,7 @@ const steps: { key: StepType; label: string }[] = [
 
 export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, onStepClick }) => {
   return (
-    <div className="flex items-center justify-between mb-12 px-4 max-w-4xl mx-auto overflow-x-auto pb-6 no-scrollbar">
+    <div className="flex items-center justify-between mb-16 px-4 max-w-4xl mx-auto overflow-x-auto pt-6 pb-10 no-scrollbar">
       {steps.map((step, index) => {
         const stepIndex = steps.findIndex(s => s.key === currentStep);
         const isActive = step.key === currentStep;
@@ -30,9 +30,9 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, onSte
               aria-label={`Navigate to ${step.label}`}
             >
               <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-110 active:scale-95 ${
-                isActive ? 'bg-indigo-600 border-indigo-600 text-white ring-4 ring-indigo-50' : 
-                isPast ? 'bg-emerald-500 border-emerald-500 text-white hover:bg-emerald-600' : 
-                'bg-white border-gray-200 text-gray-400 group-hover:border-indigo-300 group-hover:text-indigo-500'
+                isActive ? 'bg-nsw-blue border-nsw-blue text-white ring-4 ring-nsw-light-blue/10' : 
+                isPast ? 'bg-nsw-light-blue border-nsw-light-blue text-white hover:bg-nsw-blue' : 
+                'bg-white border-gray-200 text-gray-400 group-hover:border-nsw-light-blue/30 group-hover:text-nsw-blue'
               }`}>
                 {isPast ? (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,13 +43,13 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, onSte
                 )}
               </div>
               <span className={`absolute -bottom-7 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors duration-300 ${
-                isActive ? 'text-indigo-600' : isPast ? 'text-emerald-600' : 'text-gray-400 group-hover:text-indigo-500'
+                isActive ? 'text-nsw-blue' : isPast ? 'text-nsw-light-blue' : 'text-gray-400 group-hover:text-nsw-blue'
               }`}>
                 {step.label.split('. ')[1]}
               </span>
             </button>
             {index < steps.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-4 min-w-[30px] transition-colors duration-700 ${isPast ? 'bg-emerald-500' : 'bg-gray-200'}`} />
+              <div className={`flex-1 h-0.5 mx-4 min-w-[30px] transition-colors duration-700 ${isPast ? 'bg-nsw-light-blue' : 'bg-gray-200'}`} />
             )}
           </React.Fragment>
         );
