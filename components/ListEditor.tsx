@@ -68,9 +68,9 @@ export const ListEditor: React.FC<ListEditorProps> = ({
           {items.map((item) => (
             <div 
               key={item.id} 
-              className="group flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-emerald-300 hover:shadow-sm transition-all"
+              className="group flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-nsw-light-blue/30 hover:shadow-sm transition-all"
             >
-              <div className="mt-2.5 w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+              <div className="mt-2.5 w-1.5 h-1.5 rounded-full bg-nsw-light-blue flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <AutoResizeTextArea
                   className="text-gray-700 leading-relaxed text-sm"
@@ -82,7 +82,7 @@ export const ListEditor: React.FC<ListEditorProps> = ({
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                 <button 
                   onClick={() => onRemove(item.id)}
-                  className="p-1.5 text-rose-400 hover:bg-rose-50 rounded-md transition-colors"
+                  className="p-1.5 text-nsw-red hover:bg-nsw-red/10 rounded-md transition-colors"
                   title="Delete"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,11 +106,11 @@ export const ListEditor: React.FC<ListEditorProps> = ({
             onChange={(e) => setNewText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
             placeholder={`Add a new ${typeLabel.toLowerCase()}...`}
-            className="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all text-sm"
+            className="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-nsw-blue focus:bg-white outline-none transition-all text-sm"
           />
           <button 
             onClick={handleAdd}
-            className="px-6 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-all shadow-md active:scale-95 text-sm"
+            className="px-6 py-2 bg-nsw-blue text-white font-semibold rounded-lg hover:bg-nsw-blue/90 transition-all shadow-md active:scale-95 text-sm"
           >
             Add
           </button>
