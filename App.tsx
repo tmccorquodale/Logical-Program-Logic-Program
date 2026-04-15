@@ -44,8 +44,15 @@ const App: React.FC = () => {
     } else if (currentStep === 'AIMS') {
       const allNeedsHaveAims = logic.needs.every(n => n.aims.length > 0);
       if (allNeedsHaveAims) {
-        if (!selectedNeedId) setSelectedNeedId(logic.needs[0].id);
-        if (!selectedAimId) setSelectedAimId(logic.needs[0].aims[0].id);
+        let targetNeed = logic.needs.find(n => n.id === selectedNeedId);
+        if (!targetNeed) {
+          targetNeed = logic.needs[0];
+          setSelectedNeedId(targetNeed.id);
+        }
+        
+        if (!selectedAimId || !targetNeed.aims.find(a => a.id === selectedAimId)) {
+          setSelectedAimId(targetNeed.aims[0].id);
+        }
         setCurrentStep('DETAILS');
       } else {
         alert("Each need must have at least one aim before proceeding.");
