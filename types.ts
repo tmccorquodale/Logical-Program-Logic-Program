@@ -2,6 +2,7 @@
 export interface Aim {
   id: string;
   description: string;
+  inputs: string[];
   activities: string[];
   outputs: string[];
   shortTermImpacts: string[];
@@ -11,12 +12,12 @@ export interface Aim {
 export interface Need {
   id: string;
   description: string;
-  aims: Aims[];
+  aims: Aim[];
 }
 
 export interface ProgramLogic {
   goal: string;
-  needs: Needs[];
+  needs: Need[];
 }
 
 export type StepType = 'GOAL' | 'NEEDS' | 'AIMS' | 'DETAILS' | 'REVIEW';
