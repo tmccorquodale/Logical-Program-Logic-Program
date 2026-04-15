@@ -349,10 +349,10 @@ const App: React.FC = () => {
           )}
 
           {currentStep === 'DETAILS' && (
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="w-full md:w-1/4 space-y-2">
+            <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="w-full md:w-1/4 space-y-2 md:sticky md:top-6">
                 <h3 className="font-bold text-gray-400 text-[10px] uppercase px-2 mb-2">Select Aim</h3>
-                <div className="max-h-[600px] overflow-y-auto space-y-2 pr-2">
+                <div className="max-h-[calc(100vh-200px)] overflow-y-auto space-y-2 pr-2">
                   {logic.needs.flatMap(n => n.aims.map(a => ({ needId: n.id, aim: a })))
                     .map(({ needId, aim }) => (
                     <button
