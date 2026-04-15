@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { ProgramLogic, StepType, Need, Aim } from './types';
 import { StepIndicator } from './components/StepIndicator';
 import { GoalStep } from './components/GoalStep';
@@ -84,7 +86,7 @@ const App: React.FC = () => {
         const importedNeeds: Need[] = [];
         
         for (let i = 3; i < data.length; i++) {
-          const [needTxt, aimTxt, actTxt, outTxt, shortTxt, longTxt] = data[i];
+          const [needTxt, aimTxt, inpTxt, actTxt, outTxt, shortTxt, longTxt] = data[i];
           if (!needTxt && !aimTxt) continue;
 
           let targetNeed = importedNeeds[importedNeeds.length - 1];
@@ -97,6 +99,7 @@ const App: React.FC = () => {
             targetNeed.aims.push({
               id: crypto.randomUUID(),
               description: aimTxt,
+              inputs: inpTxt ? (typeof inpTxt === 'string' ? inpTxt.split('\n') : [inpTxt.toString()]) : [],
               activities: actTxt ? (typeof actTxt === 'string' ? actTxt.split('\n') : [actTxt.toString()]) : [],
               outputs: outTxt ? (typeof outTxt === 'string' ? outTxt.split('\n') : [outTxt.toString()]) : [],
               shortTermImpacts: shortTxt ? (typeof shortTxt === 'string' ? shortTxt.split('\n') : [shortTxt.toString()]) : [],
@@ -114,31 +117,118 @@ const App: React.FC = () => {
     reader.readAsBinaryString(file);
   };
 
-  const exportToExcel = () => {
-    const data: any[] = [];
-    data.push(['PROJECT GOAL:', logic.goal]);
-    data.push([]);
-    data.push(['Needs', 'Aims', 'Activities', 'Outputs', 'Short/Medium Term Impacts', 'Long Term Impacts']);
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Program Logic');
 
-    logic.needs.forEach((need, nIdx) => {
-      need.aims.forEach((aim, aIdx) => {
-        data.push([
-          aIdx === 0 ? need.description : '',
-          aim.description,
-          aim.activities.join('\n'),
-          aim.outputs.join('\n'),
-          aim.shortTermImpacts.join('\n'),
-          aim.longTermImpacts.join('\n')
-        ]);
+    // 1. Goal Row
+    const goalRow = worksheet.addRow(['Goal: ' + (logic.goal || 'NOT DEFINED'), '', '', '', '', '', '']);
+    worksheet.mergeCells('A1:G1');
+    goalRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 14 };
+    goalRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002664' } };
+    goalRow.height = 40;
+    goalRow.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+
+    // 2. Headers
+    const headers = ['Needs', 'Aims', 'Inputs', 'Activities', 'Outputs', 'Short Term Impacts', 'Long Term Impacts'];
+    const headerRow = worksheet.addRow(headers);
+    headerRow.font = { bold: true, color: { argb: 'FF6B7280' } };
+    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF3F4F6' } };
+    headerRow.height = 30;
+    headerRow.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+
+    // 3. Data Rows
+    let currentRow = 3;
+
+    if (logic.needs.length === 0) {
+      const emptyRow = worksheet.addRow(['Upload an Excel file or use the wizard to build your logic.', '', '', '', '', '', '']);
+      worksheet.mergeCells(`A${currentRow}:G${currentRow}`);
+      emptyRow.font = { italic: true, color: { argb: 'FF9CA3AF' } };
+      emptyRow.alignment = { vertical: 'middle', horizontal: 'center' };
+      emptyRow.height = 60;
+    } else {
+      logic.needs.forEach((need) => {
+        const startRow = currentRow;
+
+        if (need.aims.length === 0) {
+          const row = worksheet.addRow([need.description, 'No Aims defined.', '', '', '', '', '']);
+          worksheet.mergeCells(`B${currentRow}:G${currentRow}`);
+          row.alignment = { vertical: 'top', wrapText: true, indent: 1 };
+          row.getCell(1).font = { bold: true };
+          row.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF9FAFB' } };
+          row.getCell(2).font = { italic: true, color: { argb: 'FF9CA3AF' } };
+          currentRow++;
+        } else {
+          need.aims.forEach((aim, aIdx) => {
+            const row = worksheet.addRow([
+              aIdx === 0 ? need.description : '',
+              aim.description,
+              aim.inputs.map(i => `• ${i}`).join('\n'),
+              aim.activities.map(a => `• ${a}`).join('\n'),
+              aim.outputs.map(o => `• ${o}`).join('\n'),
+              aim.shortTermImpacts.map(s => `• ${s}`).join('\n'),
+              aim.longTermImpacts.map(l => `• ${l}`).join('\n')
+            ]);
+
+            row.alignment = { vertical: 'top', wrapText: true, indent: 1 };
+            
+            // Need column styling
+            const needCell = row.getCell(1);
+            needCell.font = { bold: true };
+            needCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF9FAFB' } };
+
+            // Aim column styling
+            const aimCell = row.getCell(2);
+            aimCell.font = { bold: true, color: { argb: 'FF002664' } };
+
+            // Short Term Impacts styling
+            const stCell = row.getCell(6);
+            stCell.font = { color: { argb: 'FF002664' } };
+            stCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4FAFD' } };
+
+            // Long Term Impacts styling
+            const ltCell = row.getCell(7);
+            ltCell.font = { bold: true, color: { argb: 'FF002664' } };
+            ltCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4FAFD' } };
+
+            currentRow++;
+          });
+        }
+
+        // Merge Need cells if there are multiple aims
+        if (need.aims.length > 1) {
+          worksheet.mergeCells(`A${startRow}:A${currentRow - 1}`);
+        }
+      });
+    }
+
+    // Set column widths
+    worksheet.columns = [
+      { width: 25 }, // Needs
+      { width: 25 }, // Aims
+      { width: 30 }, // Inputs
+      { width: 35 }, // Activities
+      { width: 35 }, // Outputs
+      { width: 35 }, // Short Term
+      { width: 35 }  // Long Term
+    ];
+
+    // Add borders to all cells
+    worksheet.eachRow((row) => {
+      row.eachCell({ includeEmpty: true }, (cell) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          left: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } },
+          right: { style: 'thin', color: { argb: 'FFE5E7EB' } }
+        };
       });
     });
 
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    ws['!cols'] = [{ wch: 30 }, { wch: 30 }, { wch: 40 }, { wch: 40 }, { wch: 40 }, { wch: 40 }];
-    
-    XLSX.utils.book_append_sheet(wb, ws, "Program Logic");
-    XLSX.writeFile(wb, `Program_Logic_${new Date().toISOString().split('T')[0]}.xlsx`);
+    // Generate and save file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `Program_Logic_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
   const handleCellUpdate = (needId: string, aimId: string, field: keyof Aim, value: string | string[]) => {
@@ -157,7 +247,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-nsw-grey flex flex-col">
       <header className="bg-nsw-blue text-white py-6 shadow-lg border-b-4 border-nsw-blue/30">
-        <div className="container mx-auto px-4 max-w-6xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="container mx-auto px-4 max-w-[95%] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <span className="material-symbols-outlined text-3xl text-white inline-block -scale-x-100">square_foot</span>
             <h1 className="text-3xl font-black tracking-tighter uppercase">Program Logic Builder</h1>
@@ -178,7 +268,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-6xl flex-grow">
+      <main className="container mx-auto px-4 py-8 max-w-[95%] flex-grow">
         <StepIndicator currentStep={currentStep} onStepClick={(step) => jumpTo(step)} />
 
         <div className="min-h-[500px] mt-4">
@@ -231,7 +321,7 @@ const App: React.FC = () => {
                       ...l,
                       needs: l.needs.map(n => n.id === selectedNeedId ? {
                         ...n,
-                        aims: [...n.aims, { id: crypto.randomUUID(), description: text, activities: [], outputs: [], shortTermImpacts: [], longTermImpacts: [] }]
+                        aims: [...n.aims, { id: crypto.randomUUID(), description: text, inputs: [], activities: [], outputs: [], shortTermImpacts: [], longTermImpacts: [] }]
                       } : n)
                     }))}
                     onRemove={(id) => updateLogic(l => ({
@@ -273,7 +363,16 @@ const App: React.FC = () => {
 
               <div className="flex-1 space-y-6">
                 {currentAim ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                  <div className="flex flex-col gap-6 relative">
+                    <ListEditor
+                      title="Inputs"
+                      description="Resources needed"
+                      items={currentAim.inputs.map((t, i) => ({ id: i.toString(), text: t }))}
+                      typeLabel="Input"
+                      onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', [...currentAim.inputs, t])}
+                      onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', currentAim.inputs.filter((_, idx) => idx !== parseInt(i)))}
+                      onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', currentAim.inputs.map((old, idx) => idx === parseInt(i) ? t : old))}
+                    />
                     <ListEditor
                       title="Activities"
                       description="Steps taken"
