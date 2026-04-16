@@ -131,16 +131,23 @@ const App: React.FC = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Program Logic');
 
-    // 1. Goal Row
-    const goalRow = worksheet.addRow(['Goal: ' + (logic.goal || 'NOT DEFINED'), '', '', '', '', '', '']);
+    // 1. Program Name & Goal Row
+    const titleRow = worksheet.addRow([logic.programName || 'UNTITLED PROGRAM']);
     worksheet.mergeCells('A1:G1');
-    goalRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 14 };
+    titleRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 16 };
+    titleRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002664' } };
+    titleRow.height = 40;
+    titleRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    const goalRow = worksheet.addRow([logic.goal || 'NOT DEFINED']);
+    worksheet.mergeCells('A2:G2');
+    goalRow.font = { italic: true, color: { argb: 'FFFFFFFF' }, size: 12 };
     goalRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF002664' } };
-    goalRow.height = 40;
-    goalRow.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+    goalRow.height = 30;
+    goalRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
     // 2. Headers
-    const headers = ['Needs', 'Aims', 'Inputs', 'Activities', 'Outputs', 'Short Term Impacts', 'Long Term Impacts'];
+    const headers = ['Needs', 'Aims', 'Activities', 'Inputs', 'Outputs', 'Short Term Impacts', 'Long Term Impacts'];
     const headerRow = worksheet.addRow(headers);
     headerRow.font = { bold: true, color: { argb: 'FF6B7280' } };
     headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF3F4F6' } };
@@ -148,7 +155,7 @@ const App: React.FC = () => {
     headerRow.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
 
     // 3. Data Rows
-    let currentRow = 3;
+    let currentRow = 4;
 
     if (logic.needs.length === 0) {
       const emptyRow = worksheet.addRow(['Upload an Excel file or use the wizard to build your logic.', '', '', '', '', '', '']);
@@ -173,8 +180,8 @@ const App: React.FC = () => {
             const row = worksheet.addRow([
               aIdx === 0 ? need.description : '',
               aim.description,
-              aim.inputs.map(i => `• ${i}`).join('\n'),
               aim.activities.map(a => `• ${a}`).join('\n'),
+              aim.inputs.map(i => `• ${i}`).join('\n'),
               aim.outputs.map(o => `• ${o}`).join('\n'),
               aim.shortTermImpacts.map(s => `• ${s}`).join('\n'),
               aim.longTermImpacts.map(l => `• ${l}`).join('\n')
