@@ -1,4 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import { toPng } from 'html-to-image';
+import { jsPDF } from 'jspdf';
 import { ProgramLogic, Aim } from '../types';
 
 interface LogicDiagramProps {
@@ -7,9 +9,55 @@ interface LogicDiagramProps {
 
 export const LogicDiagram: React.FC<LogicDiagramProps> = ({ data }) => {
   const diagramRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
-  const handlePrint = () => {
-    window.print();
+  const exportImage = async () => {
+    if (!diagramRef.current) return;
+    setIsExporting(true);
+    try {
+      const dataUrl = await toPng(diagramRef.current, { 
+        cacheBust: true, 
+        backgroundColor: '#f9fafb',
+        pixelRatio: 2 // High quality
+      });
+      const link = document.createElement('a');
+      link.download = `Program_Logic_${new Date().toISOString().split('T')[0]}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Export failed', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const exportPDF = async () => {
+    if (!diagramRef.current) return;
+    setIsExporting(true);
+    try {
+      const dataUrl = await toPng(diagramRef.current, { 
+        cacheBust: true, 
+        backgroundColor: '#f9fafb',
+        pixelRatio: 2
+      });
+      
+      const img = new Image();
+      img.src = dataUrl;
+      await new Promise((resolve) => (img.onload = resolve));
+
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'px',
+        format: [img.width, img.height]
+      });
+
+      pdf.addImage(dataUrl, 'PNG', 0, 0, img.width, img.height);
+      pdf.save(`Program_Logic_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (err) {
+      console.error('PDF Export failed', err);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const categories = [
@@ -24,45 +72,22 @@ export const LogicDiagram: React.FC<LogicDiagramProps> = ({ data }) => {
 
   return (
     <div className="space-y-4">
-      <style dangerouslySetInnerHTML={{ __html: `
-        @media print {
-          @page {
-            size: landscape;
-            margin: 0.5cm;
-          }
-          body * {
-            visibility: hidden;
-          }
-          #printable-diagram, #printable-diagram * {
-            visibility: visible;
-          }
-          #printable-diagram {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 1600px !important;
-            transform: scale(0.68);
-            transform-origin: top left;
-            background: white !important;
-            border: none !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-          }
-          /* Ensure colors print */
-          .bg-nsw-blue { background-color: #002664 !important; -webkit-print-color-adjust: exact; }
-          .text-white { color: white !important; }
-          .bg-white { background-color: white !important; -webkit-print-color-adjust: exact; }
-          .bg-nsw-light-blue\\/10 { background-color: rgba(214, 233, 247, 0.4) !important; -webkit-print-color-adjust: exact; }
-        }
-      `}} />
-      <div className="flex justify-end print:hidden">
+      <div className="flex justify-end gap-3 print:hidden">
         <button
-          onClick={handlePrint}
-          className="bg-nsw-blue text-white px-6 py-2 rounded-lg font-bold hover:bg-nsw-blue/90 transition-all text-sm flex items-center gap-2 shadow-md"
+          onClick={exportImage}
+          disabled={isExporting}
+          className="bg-white text-nsw-blue border-2 border-nsw-blue px-6 py-2 rounded-lg font-bold hover:bg-nsw-blue/5 transition-all text-sm flex items-center gap-2 shadow-sm disabled:opacity-50"
+        >
+          <span className="material-symbols-outlined text-lg">image</span>
+          {isExporting ? 'Exporting...' : 'Download Image'}
+        </button>
+        <button
+          onClick={exportPDF}
+          disabled={isExporting}
+          className="bg-nsw-blue text-white px-6 py-2 rounded-lg font-bold hover:bg-nsw-blue/90 transition-all text-sm flex items-center gap-2 shadow-md disabled:opacity-50"
         >
           <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
-          Print to PDF
+          {isExporting ? 'Exporting...' : 'Download PDF'}
         </button>
       </div>
 
