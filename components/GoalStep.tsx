@@ -1,11 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 
 interface GoalStepProps {
+  programName: string;
+  setProgramName: (name: string) => void;
   goal: string;
   setGoal: (goal: string) => void;
 }
 
-export const GoalStep: React.FC<GoalStepProps> = ({ goal, setGoal }) => {
+export const GoalStep: React.FC<GoalStepProps> = ({ programName, setProgramName, goal, setGoal }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -19,12 +21,25 @@ export const GoalStep: React.FC<GoalStepProps> = ({ goal, setGoal }) => {
     <div className="max-w-4xl mx-auto py-10 animate-in fade-in zoom-in duration-500">
       <div className="bg-white p-10 rounded-3xl border border-gray-100 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-2 bg-nsw-blue" />
+        
+        <div className="mb-10">
+          <h2 className="text-3xl font-black text-gray-800 mb-6 flex items-center gap-4">
+            Program Name
+          </h2>
+          <input
+            type="text"
+            value={programName}
+            onChange={(e) => setProgramName(e.target.value)}
+            placeholder="e.g. NSW Clinical Trials Capacity Building Program"
+            className="w-full p-4 text-xl font-bold border-b-2 border-gray-100 focus:border-nsw-blue transition-all outline-none bg-transparent placeholder:text-gray-200"
+          />
+        </div>
+
         <h2 className="text-3xl font-black text-gray-800 mb-6 flex items-center gap-4">
-          <span className="bg-nsw-light-blue/10 text-nsw-blue w-10 h-10 rounded-full flex items-center justify-center text-xl">1</span>
           Define the Overarching Goal/Vision
         </h2>
         <p className="text-gray-500 mb-8 text-lg leading-relaxed">
-          Start by defining the ultimate "North Star" for your program. What is the highest level of change you want to see in the world as a result of your work?
+          In one sentence, what is the ultimate goal of this program? (e.g. to increase the capacity and capability of the NSW Clinical Trials workforce)
         </p>
         <div className="relative">
           <textarea
