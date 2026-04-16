@@ -1,4 +1,3 @@
-
 export interface Aim {
   id: string;
   description: string;
