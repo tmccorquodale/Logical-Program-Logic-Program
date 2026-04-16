@@ -16,6 +16,7 @@ export interface Need {
 }
 
 export interface ProgramLogic {
+  programName: string;
   goal: string;
   needs: Need[];
 }
