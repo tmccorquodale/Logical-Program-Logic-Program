@@ -105,29 +105,50 @@ export const LogicDiagram: React.FC<LogicDiagramProps> = ({ data }) => {
                       </div>
 
                       {/* Details Columns */}
-                      <div className="col-span-5 grid grid-cols-5 gap-4 items-stretch">
-                        {[
-                          { key: 'inputs', color: 'bg-white' },
-                          { key: 'activities', color: 'bg-white' },
-                          { key: 'outputs', color: 'bg-white' },
-                          { key: 'shortTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20' },
-                          { key: 'longTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20 font-bold' }
-                        ].map((col) => (
-                          <div key={col.key} className="col-span-1 flex flex-col gap-2">
-                            {((aim[col.key as keyof Aim] as string[]) || []).length === 0 ? (
-                              <div className="flex-1 border border-dashed border-gray-200 rounded-xl" />
-                            ) : (
-                              ((aim[col.key as keyof Aim] as string[]) || []).map((text, i) => (
-                                <div 
-                                  key={i}
-                                  className={`p-3 rounded-lg shadow-sm border border-gray-100 text-[10px] leading-tight ${col.color}`}
-                                >
-                                  {text}
-                                </div>
-                              ))
-                            )}
-                          </div>
-                        ))}
+                      <div className="col-span-5 flex flex-col gap-2">
+                        {(() => {
+                          const detailCols = [
+                            { key: 'inputs', color: 'bg-white' },
+                            { key: 'activities', color: 'bg-white' },
+                            { key: 'outputs', color: 'bg-white' },
+                            { key: 'shortTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20' },
+                            { key: 'longTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20 font-bold' }
+                          ];
+                          
+                          const maxItems = Math.max(
+                            ...detailCols.map(c => ((aim[c.key as keyof Aim] as string[]) || []).length)
+                          );
+
+                          if (maxItems === 0) {
+                            return (
+                              <div className="grid grid-cols-5 gap-4 flex-1">
+                                {detailCols.map(c => (
+                                  <div key={c.key} className="border border-dashed border-gray-200 rounded-xl min-h-[60px]" />
+                                ))}
+                              </div>
+                            );
+                          }
+
+                          return Array.from({ length: maxItems }).map((_, i) => (
+                            <div key={i} className="grid grid-cols-5 gap-4 items-stretch">
+                              {detailCols.map(col => {
+                                const items = (aim[col.key as keyof Aim] as string[]) || [];
+                                const text = items[i];
+                                return (
+                                  <div key={col.key} className="col-span-1 flex items-stretch">
+                                    {text ? (
+                                      <div className={`w-full p-3 rounded-lg shadow-sm border border-gray-100 text-[10px] leading-tight flex items-center ${col.color}`}>
+                                        {text}
+                                      </div>
+                                    ) : (
+                                      <div className="w-full min-h-[40px]" /> 
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ));
+                        })()}
                       </div>
                     </div>
                   ))}
