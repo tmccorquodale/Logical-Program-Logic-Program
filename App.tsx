@@ -380,15 +380,6 @@ const App: React.FC = () => {
                 {currentAim ? (
                   <div className="flex flex-col gap-6 relative">
                     <ListEditor
-                      title="Inputs"
-                      description="What resources are needed to conduct the activities? (e.g. staff, funding, partnerships, etc)"
-                      items={currentAim.inputs.map((t, i) => ({ id: i.toString(), text: t }))}
-                      typeLabel="Input"
-                      onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', [...currentAim.inputs, t])}
-                      onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', currentAim.inputs.filter((_, idx) => idx !== parseInt(i)))}
-                      onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', currentAim.inputs.map((old, idx) => idx === parseInt(i) ? t : old))}
-                    />
-                    <ListEditor
                       title="Activities"
                       description="What activities need to be undertaken to deliver the outputs? (e.g. develop fact sheets, develop and promote training for clinical trial managers, etc)"
                       items={currentAim.activities.map((t, i) => ({ id: i.toString(), text: t }))}
@@ -396,6 +387,15 @@ const App: React.FC = () => {
                       onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', [...currentAim.activities, t])}
                       onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', currentAim.activities.filter((_, idx) => idx !== parseInt(i)))}
                       onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', currentAim.activities.map((old, idx) => idx === parseInt(i) ? t : old))}
+                    />
+                    <ListEditor
+                      title="Inputs"
+                      description="What resources are needed to conduct the activities? (e.g. staff, funding, partnerships, etc)"
+                      items={currentAim.inputs.map((t, i) => ({ id: i.toString(), text: t }))}
+                      typeLabel="Input"
+                      onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', [...currentAim.inputs, t])}
+                      onRemove={(i) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', currentAim.inputs.filter((_, idx) => idx !== parseInt(i)))}
+                      onUpdate={(i, t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', currentAim.inputs.map((old, idx) => idx === parseInt(i) ? t : old))}
                     />
                     <ListEditor
                       title="Outputs"
