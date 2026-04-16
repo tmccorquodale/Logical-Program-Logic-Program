@@ -29,8 +29,8 @@ export const LogicDiagram: React.FC<LogicDiagramProps> = ({ data }) => {
   const categories = [
     { title: 'Needs', key: 'needs' as const },
     { title: 'Aims', key: 'aims' as const },
-    { title: 'Inputs', key: 'inputs' as const },
     { title: 'Activities', key: 'activities' as const },
+    { title: 'Inputs', key: 'inputs' as const },
     { title: 'Outputs', key: 'outputs' as const },
     { title: 'Short Term Impacts', key: 'shortTermImpacts' as const },
     { title: 'Long Term Impacts', key: 'longTermImpacts' as const },
@@ -56,105 +56,138 @@ export const LogicDiagram: React.FC<LogicDiagramProps> = ({ data }) => {
           {/* Goal Header */}
           <div className="mb-12">
             <div className="w-full bg-nsw-blue text-white px-10 py-8 rounded-2xl shadow-xl border-4 border-white text-center">
-              <h3 className="text-2xl font-black uppercase tracking-widest mb-2">
+              <h3 className="text-[27px] font-black uppercase tracking-widest mb-2">
                 {data.programName || 'Program Logic'}
               </h3>
-              <p className="text-base font-normal opacity-90 max-w-4xl mx-auto">
+              <p className="text-[19px] font-normal opacity-90 max-w-4xl mx-auto">
                 {data.goal || 'Not Defined'}
               </p>
             </div>
           </div>
 
           {/* Header Row */}
-          <div className="grid grid-cols-7 gap-4 mb-6 sticky top-0 bg-gray-50/80 backdrop-blur-sm py-2 z-20">
+          <div className="grid grid-cols-[0.75fr_0.75fr_1fr_1fr_1fr_1fr_1fr] gap-4 mb-6 sticky top-0 bg-gray-50/80 backdrop-blur-sm py-2 z-20">
             {categories.map((cat) => (
               <div key={cat.title} className="bg-white p-3 rounded-xl shadow-sm border-2 border-nsw-blue/10 text-center">
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-nsw-blue">{cat.title}</h4>
+                <h4 className="text-[13px] font-black uppercase tracking-widest text-nsw-blue">{cat.title}</h4>
               </div>
             ))}
           </div>
 
-          {/* Hierarchical Flow */}
-          <div className="flex flex-col gap-8">
+          {/* Hierarchical Flow - Flat Grid for Perfect Alignment */}
+          <div 
+            className="grid grid-cols-[0.75fr_0.75fr_1fr_1fr_1fr_1fr_1fr] gap-x-4 gap-y-2"
+            style={{ gridAutoRows: 'min-content' }}
+          >
             {data.needs.length === 0 ? (
-              <div className="p-20 text-center text-gray-300 italic bg-white rounded-2xl border-2 border-dashed">
+              <div className="col-span-7 p-20 text-center text-gray-300 italic bg-white rounded-2xl border-2 border-dashed">
                 No data to display.
               </div>
-            ) : data.needs.map((need) => (
-              <div key={need.id} className="grid grid-cols-7 gap-4 items-stretch">
-                {/* Need Box */}
-                <div className="col-span-1 flex items-stretch">
-                  <div className="w-full p-4 rounded-xl shadow-sm border border-gray-200 bg-white text-xs font-bold text-center leading-relaxed flex items-center justify-center">
+            ) : (() => {
+              const rows: React.ReactNode[] = [];
+              let currentRow = 1;
+
+              data.needs.forEach((need) => {
+                // Calculate total rows for this need
+                const needRows = need.aims.length === 0 ? 1 : need.aims.reduce((acc, aim) => {
+                  const maxItems = Math.max(
+                    1,
+                    aim.activities.length,
+                    aim.inputs.length,
+                    aim.outputs.length,
+                    aim.shortTermImpacts.length,
+                    aim.longTermImpacts.length
+                  );
+                  return acc + maxItems;
+                }, 0);
+
+                const needStart = currentRow;
+
+                // Render Need Box
+                rows.push(
+                  <div 
+                    key={`need-${need.id}`}
+                    className="col-start-1 bg-white p-4 rounded-xl shadow-sm border border-gray-200 text-[15px] font-bold text-center leading-relaxed flex items-center justify-center"
+                    style={{ gridRow: `span ${needRows}` }}
+                  >
                     {need.description}
                   </div>
-                </div>
+                );
 
-                {/* Aims and beyond */}
-                <div className="col-span-6 flex flex-col gap-4">
-                  {need.aims.length === 0 ? (
-                    <div className="flex-1 flex items-center justify-center text-gray-300 italic text-xs border-2 border-dashed rounded-xl">
+                if (need.aims.length === 0) {
+                  rows.push(
+                    <div key={`no-aim-${need.id}`} className="col-start-2 col-span-6 p-10 text-center text-gray-300 italic text-[15px] border-2 border-dashed rounded-xl">
                       No Aims defined
                     </div>
-                  ) : need.aims.map((aim) => (
-                    <div key={aim.id} className="grid grid-cols-6 gap-4 items-stretch flex-1">
-                      {/* Aim Box */}
-                      <div className="col-span-1 flex items-stretch">
-                        <div className="w-full p-4 rounded-xl shadow-sm border border-nsw-blue/20 bg-nsw-blue text-white text-xs font-bold text-center leading-relaxed flex items-center justify-center">
-                          {aim.description}
-                        </div>
+                  );
+                  currentRow++;
+                } else {
+                  need.aims.forEach((aim) => {
+                    const aimMaxItems = Math.max(
+                      1,
+                      aim.activities.length,
+                      aim.inputs.length,
+                      aim.outputs.length,
+                      aim.shortTermImpacts.length,
+                      aim.longTermImpacts.length
+                    );
+                    const aimStart = currentRow;
+
+                    // Render Aim Box
+                    rows.push(
+                      <div 
+                        key={`aim-${aim.id}`}
+                        className="col-start-2 bg-nsw-blue text-white p-4 rounded-xl shadow-sm border border-nsw-blue/20 text-[15px] font-bold text-center leading-relaxed flex items-center justify-center"
+                        style={{ gridRow: `span ${aimMaxItems}` }}
+                      >
+                        {aim.description}
                       </div>
+                    );
 
-                      {/* Details Columns */}
-                      <div className="col-span-5 flex flex-col gap-2">
-                        {(() => {
-                          const detailCols = [
-                            { key: 'inputs', color: 'bg-white' },
-                            { key: 'activities', color: 'bg-white' },
-                            { key: 'outputs', color: 'bg-white' },
-                            { key: 'shortTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20' },
-                            { key: 'longTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20 font-bold' }
-                          ];
-                          
-                          const maxItems = Math.max(
-                            ...detailCols.map(c => ((aim[c.key as keyof Aim] as string[]) || []).length)
+                    // Render Detail Rows
+                    for (let i = 0; i < aimMaxItems; i++) {
+                      const detailCols = [
+                        { key: 'activities', color: 'bg-white' },
+                        { key: 'inputs', color: 'bg-white' },
+                        { key: 'outputs', color: 'bg-white' },
+                        { key: 'shortTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20' },
+                        { key: 'longTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20 font-bold' }
+                      ];
+
+                      detailCols.forEach((col, colIdx) => {
+                        const items = (aim[col.key as keyof Aim] as string[]) || [];
+                        const text = items[i];
+                        
+                        if (text) {
+                          rows.push(
+                            <div 
+                              key={`detail-${aim.id}-${col.key}-${i}`}
+                              className={`col-start-${colIdx + 3} p-3 rounded-lg shadow-sm border border-gray-100 text-[13px] leading-tight flex items-center ${col.color}`}
+                            >
+                              {text}
+                            </div>
                           );
-
-                          if (maxItems === 0) {
-                            return (
-                              <div className="grid grid-cols-5 gap-4 flex-1">
-                                {detailCols.map(c => (
-                                  <div key={c.key} className="border border-dashed border-gray-200 rounded-xl min-h-[60px]" />
-                                ))}
-                              </div>
+                        } else if (aimMaxItems === 1 || i === 0) {
+                          // Only show dashed placeholder for the first row of an aim if it's empty
+                          const hasAnyInCol = items.length > 0;
+                          if (!hasAnyInCol) {
+                            rows.push(
+                              <div 
+                                key={`empty-${aim.id}-${col.key}`}
+                                className={`col-start-${colIdx + 3} border border-dashed border-gray-200 rounded-xl min-h-[60px]`}
+                              />
                             );
                           }
+                        }
+                      });
+                      currentRow++;
+                    }
+                  });
+                }
+              });
 
-                          return Array.from({ length: maxItems }).map((_, i) => (
-                            <div key={i} className="grid grid-cols-5 gap-4 items-stretch">
-                              {detailCols.map(col => {
-                                const items = (aim[col.key as keyof Aim] as string[]) || [];
-                                const text = items[i];
-                                return (
-                                  <div key={col.key} className="col-span-1 flex items-stretch">
-                                    {text ? (
-                                      <div className={`w-full p-3 rounded-lg shadow-sm border border-gray-100 text-[10px] leading-tight flex items-center ${col.color}`}>
-                                        {text}
-                                      </div>
-                                    ) : (
-                                      <div className="w-full min-h-[40px]" /> 
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          ));
-                        })()}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+              return rows;
+            })()}
           </div>
         </div>
       </div>
