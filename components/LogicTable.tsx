@@ -29,8 +29,8 @@ export const LogicTable: React.FC<LogicTableProps> = ({ data, onJumpTo }) => {
           <tr className="bg-gray-100 text-gray-500 font-black uppercase tracking-tighter border-b">
             <th className="p-3 border-r text-left w-[12%]">Needs</th>
             <th className="p-3 border-r text-left w-[12%]">Aims</th>
-            <th className="p-3 border-r text-left w-[15%]">Inputs</th>
             <th className="p-3 border-r text-left w-[15%]">Activities</th>
+            <th className="p-3 border-r text-left w-[15%]">Inputs</th>
             <th className="p-3 border-r text-left w-[15%]">Outputs</th>
             <th className="p-3 border-r text-left w-[15%]">Short Term Impacts</th>
             <th className="p-3 text-left w-[16%]">Long Term Impacts</th>
@@ -69,13 +69,13 @@ export const LogicTable: React.FC<LogicTableProps> = ({ data, onJumpTo }) => {
                   </td>
                   <td className="p-3 border-r align-top bg-white relative">
                      <ul className="list-disc ml-4 space-y-1 text-gray-600">
-                       {aim.inputs.map((it, i) => <li key={i}>{it}</li>)}
+                       {aim.activities.map((it, i) => <li key={i}>{it}</li>)}
                      </ul>
                      <button onClick={() => onJumpTo('DETAILS', need.id, aim.id)} className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 bg-nsw-light-blue/20 text-nsw-blue p-1 rounded">✏️</button>
                   </td>
                   <td className="p-3 border-r align-top bg-white relative">
                      <ul className="list-disc ml-4 space-y-1 text-gray-600">
-                       {aim.activities.map((it, i) => <li key={i}>{it}</li>)}
+                       {aim.inputs.map((it, i) => <li key={i}>{it}</li>)}
                      </ul>
                      <button onClick={() => onJumpTo('DETAILS', need.id, aim.id)} className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 bg-nsw-light-blue/20 text-nsw-blue p-1 rounded">✏️</button>
                   </td>
