@@ -7,10 +7,12 @@ import { StepIndicator } from './components/StepIndicator';
 import { GoalStep } from './components/GoalStep';
 import { ListEditor } from './components/ListEditor';
 import { LogicTable } from './components/LogicTable';
+import { LogicDiagram } from './components/LogicDiagram';
 
 const STORAGE_KEY = 'logic_builder_data_standalone_v2';
 
 const initialLogic: ProgramLogic = {
+  programName: '',
   goal: '',
   needs: []
 };
@@ -23,6 +25,7 @@ const App: React.FC = () => {
   });
   const [selectedNeedId, setSelectedNeedId] = useState<string | null>(null);
   const [selectedAimId, setSelectedAimId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'TABLE' | 'DIAGRAM'>('TABLE');
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(logic));
@@ -115,7 +118,7 @@ const App: React.FC = () => {
           }
         }
 
-        setLogic({ goal: importedGoal, needs: importedNeeds });
+        setLogic({ programName: '', goal: importedGoal, needs: importedNeeds });
         alert("Excel data imported successfully!");
       } catch (err) {
         alert("Error parsing Excel. Use the exported template format.");
@@ -280,13 +283,18 @@ const App: React.FC = () => {
 
         <div className="min-h-[500px] mt-4">
           {currentStep === 'GOAL' && (
-            <GoalStep goal={logic.goal} setGoal={(g) => updateLogic(l => ({ ...l, goal: g }))} />
+            <GoalStep 
+              programName={logic.programName}
+              setProgramName={(name) => updateLogic(l => ({ ...l, programName: name }))}
+              goal={logic.goal} 
+              setGoal={(g) => updateLogic(l => ({ ...l, goal: g }))} 
+            />
           )}
 
           {currentStep === 'NEEDS' && (
             <ListEditor
               title="Identify Needs"
-              description="Define the core problems addressed by the program."
+              description="What needs to be addressed in order achieve the goal?"
               items={logic.needs.map(n => ({ id: n.id, text: n.description }))}
               typeLabel="Need"
               onAdd={(text) => updateLogic(l => ({ 
@@ -321,7 +329,7 @@ const App: React.FC = () => {
                 {selectedNeedId ? (
                   <ListEditor
                     title="Aims"
-                    description="Outcomes for the selected need."
+                    description="How are you going to address the needs?"
                     items={currentNeed?.aims.map(a => ({ id: a.id, text: a.description })) || []}
                     typeLabel="Aim"
                     onAdd={(text) => updateLogic(l => ({
@@ -373,7 +381,7 @@ const App: React.FC = () => {
                   <div className="flex flex-col gap-6 relative">
                     <ListEditor
                       title="Inputs"
-                      description="Resources needed"
+                      description="What resources are needed to conduct the activities? (e.g. staff, funding, partnerships, etc)"
                       items={currentAim.inputs.map((t, i) => ({ id: i.toString(), text: t }))}
                       typeLabel="Input"
                       onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'inputs', [...currentAim.inputs, t])}
@@ -382,7 +390,7 @@ const App: React.FC = () => {
                     />
                     <ListEditor
                       title="Activities"
-                      description="Steps taken"
+                      description="What activities need to be undertaken to deliver the outputs? (e.g. develop fact sheets, develop and promote training for clinical trial managers, etc)"
                       items={currentAim.activities.map((t, i) => ({ id: i.toString(), text: t }))}
                       typeLabel="Activity"
                       onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'activities', [...currentAim.activities, t])}
@@ -391,7 +399,7 @@ const App: React.FC = () => {
                     />
                     <ListEditor
                       title="Outputs"
-                      description="Tangible results"
+                      description="What products and services need to be delivered to achieve the impacts? (e.g. fact sheets distributed, clinical trial managers attend training, etc)"
                       items={currentAim.outputs.map((t, i) => ({ id: i.toString(), text: t }))}
                       typeLabel="Output"
                       onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'outputs', [...currentAim.outputs, t])}
@@ -400,7 +408,7 @@ const App: React.FC = () => {
                     />
                     <ListEditor
                       title="Short Term Impacts"
-                      description="Immediate changes"
+                      description="What short-term outcomes are required in order to achieve the long-term outcomes, and demonstrate measurable progress against your activities?"
                       items={currentAim.shortTermImpacts.map((t, i) => ({ id: i.toString(), text: t }))}
                       typeLabel="Impact"
                       onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'shortTermImpacts', [...currentAim.shortTermImpacts, t])}
@@ -409,7 +417,7 @@ const App: React.FC = () => {
                     />
                     <ListEditor
                       title="Long Term Impacts"
-                      description="Sustainable goals"
+                      description="What are the long-term outcomes of the program, and demonstrate measurable progress against your aims?"
                       items={currentAim.longTermImpacts.map((t, i) => ({ id: i.toString(), text: t }))}
                       typeLabel="Impact"
                       onAdd={(t) => handleCellUpdate(selectedNeedId!, selectedAimId!, 'longTermImpacts', [...currentAim.longTermImpacts, t])}
@@ -429,14 +437,35 @@ const App: React.FC = () => {
 
           {currentStep === 'REVIEW' && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between bg-white p-6 rounded-xl border border-gray-100 shadow-lg">
-                <h2 className="text-xl font-bold">Program Logic Review and Export</h2>
+              <div className="flex flex-col md:flex-row md:items-center justify-between bg-white p-6 rounded-xl border border-gray-100 shadow-lg gap-4">
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-xl font-bold">Program Logic Review and Export</h2>
+                  <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg self-start">
+                    <button 
+                      onClick={() => setViewMode('TABLE')}
+                      className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'TABLE' ? 'bg-white text-nsw-blue shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                      Table View
+                    </button>
+                    <button 
+                      onClick={() => setViewMode('DIAGRAM')}
+                      className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'DIAGRAM' ? 'bg-white text-nsw-blue shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                      Diagram View
+                    </button>
+                  </div>
+                </div>
                 <button onClick={exportToExcel} className="bg-nsw-blue text-white px-6 py-2 rounded-lg font-bold hover:bg-nsw-blue/90 transition-all text-sm flex items-center gap-2">
                   <span className="material-symbols-outlined text-lg">download</span>
                   Download Excel
                 </button>
               </div>
-              <LogicTable data={logic} onJumpTo={jumpTo} />
+              
+              {viewMode === 'TABLE' ? (
+                <LogicTable data={logic} onJumpTo={jumpTo} />
+              ) : (
+                <LogicDiagram data={logic} />
+              )}
             </div>
           )}
         </div>
