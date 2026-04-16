@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { toPng } from 'html-to-image';
 import { ProgramLogic, Aim } from '../types';
 
 interface LogicDiagramProps {
@@ -9,21 +8,8 @@ interface LogicDiagramProps {
 export const LogicDiagram: React.FC<LogicDiagramProps> = ({ data }) => {
   const diagramRef = useRef<HTMLDivElement>(null);
 
-  const downloadImage = () => {
-    if (diagramRef.current === null) {
-      return;
-    }
-
-    toPng(diagramRef.current, { cacheBust: true, backgroundColor: '#f3f4f6' })
-      .then((dataUrl) => {
-        const link = document.createElement('a');
-        link.download = `Program_Logic_Diagram_${new Date().toISOString().split('T')[0]}.png`;
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch((err) => {
-        console.error('oops, something went wrong!', err);
-      });
+  const handlePrint = () => {
+    window.print();
   };
 
   const categories = [
@@ -38,18 +24,41 @@ export const LogicDiagram: React.FC<LogicDiagramProps> = ({ data }) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          #printable-diagram, #printable-diagram * {
+            visibility: visible;
+          }
+          #printable-diagram {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+          }
+          @page {
+            size: landscape;
+            margin: 1cm;
+          }
+        }
+      `}} />
+      <div className="flex justify-end print:hidden">
         <button
-          onClick={downloadImage}
+          onClick={handlePrint}
           className="bg-nsw-blue text-white px-6 py-2 rounded-lg font-bold hover:bg-nsw-blue/90 transition-all text-sm flex items-center gap-2 shadow-md"
         >
-          <span className="material-symbols-outlined text-lg">image</span>
-          Download as Image
+          <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
+          Print to PDF
         </button>
       </div>
 
       <div className="overflow-x-auto pb-6">
         <div 
+          id="printable-diagram"
           ref={diagramRef} 
           className="min-w-[1600px] p-12 bg-gray-50 rounded-3xl border border-gray-200 shadow-inner"
         >
