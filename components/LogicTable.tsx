@@ -13,9 +13,16 @@ export const LogicTable: React.FC<LogicTableProps> = ({ data, onJumpTo }) => {
         <thead>
           <tr className="bg-nsw-blue text-white">
             <th colSpan={7} className="p-4 text-left border-b border-nsw-blue/80">
-              <div className="flex items-center gap-4">
-                <span className="font-black uppercase tracking-widest text-lg">Goal: {data.goal || 'NOT DEFINED'}</span>
-                <button onClick={() => onJumpTo('GOAL')} className="bg-white/10 hover:bg-white/20 text-[10px] px-2 py-1 rounded border border-white/20 transition-all">Edit Goal</button>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-black uppercase tracking-widest text-lg">
+                    {data.programName || 'UNTITLED PROGRAM'}
+                  </span>
+                  <button onClick={() => onJumpTo('GOAL')} className="bg-white/10 hover:bg-white/20 text-[10px] px-2 py-1 rounded border border-white/20 transition-all">Edit Name & Goal</button>
+                </div>
+                <p className="text-sm font-normal opacity-90 leading-relaxed max-w-4xl">
+                  {data.goal || 'NOT DEFINED'}
+                </p>
               </div>
             </th>
           </tr>
