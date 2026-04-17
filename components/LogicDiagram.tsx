@@ -109,7 +109,7 @@ export const LogicDiagram: React.FC<LogicDiagramProps> = ({ data }) => {
 
           {/* Hierarchical Flow - Single Flat Grid for Perfect Alignment */}
           <div 
-            className="grid grid-cols-[0.75fr_0.75fr_1fr_1fr_1fr_1fr_1fr] gap-x-4 gap-y-2"
+            className="grid grid-cols-[0.8fr_0.8fr_1.5fr_1fr_1fr_1fr_1fr] gap-x-4 gap-y-2"
             style={{ gridAutoRows: 'min-content' }}
           >
             {/* Headers Row */}
@@ -196,36 +196,22 @@ export const LogicDiagram: React.FC<LogicDiagramProps> = ({ data }) => {
                         { key: 'inputs', color: 'bg-white' },
                         { key: 'outputs', color: 'bg-white' },
                         { key: 'shortTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20' },
-                        { key: 'longTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20 font-bold' }
+                        { key: 'longTermImpacts', color: 'bg-nsw-light-blue/10 text-nsw-blue border-nsw-light-blue/20' }
                       ];
 
                       detailCols.forEach((col, colIdx) => {
                         const items = (aim[col.key as keyof Aim] as string[]) || [];
                         const text = items[i];
                         
-                        if (text) {
-                          rows.push(
-                            <div 
-                              key={`detail-${aim.id}-${col.key}-${i}`}
-                              className={`col-start-${colIdx + 3} p-3 rounded-lg shadow-sm border border-gray-100 text-[13px] leading-tight flex items-center ${col.color}`}
-                              style={{ gridRowStart: currentRow }}
-                            >
-                              {text}
-                            </div>
-                          );
-                        } else if (aimMaxItems === 1 || i === 0) {
-                          // Only show dashed placeholder for the first row of an aim if it's empty
-                          const hasAnyInCol = items.length > 0;
-                          if (!hasAnyInCol) {
-                            rows.push(
-                              <div 
-                                key={`empty-${aim.id}-${col.key}`}
-                                className={`col-start-${colIdx + 3} border border-dashed border-gray-200 rounded-xl min-h-[60px]`}
-                                style={{ gridRowStart: currentRow }}
-                              />
-                            );
-                          }
-                        }
+                        rows.push(
+                          <div 
+                            key={`detail-${aim.id}-${col.key}-${i}`}
+                            className={`col-start-${colIdx + 3} p-3 rounded-lg text-[13px] leading-tight flex items-center ${text ? `shadow-sm border border-gray-100 ${col.color}` : 'opacity-0'}`}
+                            style={{ gridRowStart: currentRow }}
+                          >
+                            {text || ''}
+                          </div>
+                        );
                       });
                       currentRow++;
                     }
