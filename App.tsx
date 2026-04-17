@@ -95,8 +95,8 @@ const App: React.FC = () => {
         const importedGoal = data[0]?.[1] || '';
         const importedNeeds: Need[] = [];
         
-        for (let i = 3; i < data.length; i++) {
-          const [needTxt, aimTxt, inpTxt, actTxt, outTxt, shortTxt, longTxt] = data[i];
+        for (let i = 4; i < data.length; i++) {
+          const [needTxt, aimTxt, actTxt, inpTxt, outTxt, shortTxt, longTxt] = data[i];
           if (!needTxt && !aimTxt) continue;
 
           let targetNeed = importedNeeds[importedNeeds.length - 1];
@@ -109,8 +109,8 @@ const App: React.FC = () => {
             targetNeed.aims.push({
               id: crypto.randomUUID(),
               description: aimTxt,
-              inputs: inpTxt ? (typeof inpTxt === 'string' ? inpTxt.split('\n') : [inpTxt.toString()]) : [],
               activities: actTxt ? (typeof actTxt === 'string' ? actTxt.split('\n') : [actTxt.toString()]) : [],
+              inputs: inpTxt ? (typeof inpTxt === 'string' ? inpTxt.split('\n') : [inpTxt.toString()]) : [],
               outputs: outTxt ? (typeof outTxt === 'string' ? outTxt.split('\n') : [outTxt.toString()]) : [],
               shortTermImpacts: shortTxt ? (typeof shortTxt === 'string' ? shortTxt.split('\n') : [shortTxt.toString()]) : [],
               longTermImpacts: longTxt ? (typeof longTxt === 'string' ? longTxt.split('\n') : [longTxt.toString()]) : []
