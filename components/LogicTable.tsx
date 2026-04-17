@@ -92,7 +92,7 @@ export const LogicTable: React.FC<LogicTableProps> = ({ data, onJumpTo }) => {
                      <button onClick={() => onJumpTo('DETAILS', need.id, aim.id)} className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 bg-nsw-light-blue/20 text-nsw-blue p-1 rounded">✏️</button>
                   </td>
                   <td className="p-3 align-top bg-nsw-light-blue/5 relative">
-                     <ul className="list-disc ml-4 space-y-1 text-nsw-blue font-bold">
+                     <ul className="list-disc ml-4 space-y-1 text-nsw-blue font-medium">
                        {aim.longTermImpacts.map((it, i) => <li key={i}>{it}</li>)}
                      </ul>
                      <button onClick={() => onJumpTo('DETAILS', need.id, aim.id)} className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 bg-nsw-light-blue/20 text-nsw-blue p-1 rounded">✏️</button>
